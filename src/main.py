@@ -1,6 +1,9 @@
 import sys
+import gettext
 
 from PyQt4 import QtCore, QtGui
+
+_ = gettext.gettext
 
 class FSAViewInternal(QtGui.QWidget):
 	def __init__(self, view):
@@ -18,11 +21,11 @@ class FSAView(QtGui.QMainWindow):
 		self.model = model
 		self.setWindowTitle(model.name)
 		
-		new_actioin = QtGui.QAction('New', self)
+		new_actioin = QtGui.QAction(_('New'), self)
 		self.connect(new_actioin, QtCore.SIGNAL('triggered()'), self.newModel)
-		close_action = QtGui.QAction('Close', self)
+		close_action = QtGui.QAction(_('Close'), self)
 		self.connect(close_action, QtCore.SIGNAL('triggered()'), QtCore.SLOT('close()'))
-		file_menu = self.menuBar().addMenu('&File')
+		file_menu = self.menuBar().addMenu(_('&File'))
 		file_menu.addAction(new_actioin)
 		file_menu.addAction(close_action)
 
@@ -33,7 +36,7 @@ class FSAView(QtGui.QMainWindow):
 		view.show()
 
 class FSAModel(QtCore.QObject):
-	def __init__(self, editor, name='Untitled'):
+	def __init__(self, editor, name=_('Untitled')):
 		QtCore.QObject.__init__(self, editor)
 		self.name = name
 		self.editor = editor
