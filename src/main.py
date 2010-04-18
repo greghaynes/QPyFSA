@@ -1,45 +1,63 @@
 import sys
 import gettext
+from fsas import FSA
 
 from PyQt4 import QtCore, QtGui
 
 _ = gettext.gettext
 
-class FSAViewInternal(QtGui.QWidget):
-	def __init__(self, view):
-		QtGui.QWidget.__init__(self, view)
-		self.view = view
-		self.scene = QtGui.QGraphicsScene(self)
-		
-		vlayout = QtGui.QVBoxLayout(self)
-		vlayout.addWidget(QtGui.QGraphicsView(self.scene))
-		self.setLayout(vlayout)
+class StateView(QtGui.QGraphicsEllipseItem):
+	def __init__(self, name):
+		QtGui.QGraphicsEllipseItem.__init__(self, 20, 20, 50, 50)
+		self.setBrush(QtGui.QBrush(QtGui.QColor(0x00, 0xff, 0xff)))
 
 class FSAView(QtGui.QMainWindow):
 	def __init__(self, model):
 		QtGui.QMainWindow.__init__(self)
 		self.model = model
+		self.scene = QtGui.QGraphicsScene(self)
 		self.setWindowTitle(model.name)
 		
+		# static actions
 		new_actioin = QtGui.QAction(_('New'), self)
-		self.connect(new_actioin, QtCore.SIGNAL('triggered()'), self.newModel)
 		close_action = QtGui.QAction(_('Close'), self)
+		self.connect(new_actioin, QtCore.SIGNAL('triggered()'), self.newModel)
 		self.connect(close_action, QtCore.SIGNAL('triggered()'), QtCore.SLOT('close()'))
+
+		# non-static actions
+		self.add_state_action = QtGui.QAction(_('Add State'), self)
+		self.connect(self.add_state_action, QtCore.SIGNAL('triggered()'), self.addState)
+
+		# menus
 		file_menu = self.menuBar().addMenu(_('&File'))
 		file_menu.addAction(new_actioin)
 		file_menu.addAction(close_action)
+		edit_menu = self.menuBar().addMenu(_('&Edit'))
+		edit_menu.addAction(self.add_state_action)
 
-		self.setCentralWidget(FSAViewInternal(self))
+		try:
+			self.states = model.fsa.states
+		except AttributeError:
+			self.stateviews = []
+		
+		self.setCentralWidget(QtGui.QGraphicsView(self.scene))
 	def newModel(self):
 		model = self.model.editor.createFSA()
 		view = model.createView()
 		view.show()
+	def addState(self):
+		name, ok = QtGui.QInputDialog.getText(self, 'Add State', 'State name:')
+		if ok:
+			view = StateView(name)
+			self.stateviews.append(view)
+			self.scene.addItem(view)
 
 class FSAModel(QtCore.QObject):
 	def __init__(self, editor, name=_('Untitled')):
 		QtCore.QObject.__init__(self, editor)
 		self.name = name
 		self.editor = editor
+		
 		self.views = []
 	def createView(self):
 		created = FSAView(self)
