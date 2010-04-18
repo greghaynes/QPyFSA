@@ -10,7 +10,10 @@ class StateView(QtGui.QGraphicsEllipseItem):
 	def __init__(self, name):
 		QtGui.QGraphicsEllipseItem.__init__(self, 20, 20, 50, 50)
 		self.setFlags(QtGui.QGraphicsItem.ItemIsMovable)
-		self.setBrush(QtGui.QBrush(QtGui.QColor(0x00, 0xff, 0xff)))
+		self.setBrush(QtGui.QBrush(QtGui.QColor(0xAA, 0xff, 0xff)))
+		
+		label = QtGui.QGraphicsTextItem(name, self)
+		label.setPos(20+((50 - label.boundingRect().width())/2), 20+((50 - label.boundingRect().height()) / 2))
 
 class FSAView(QtGui.QMainWindow):
 	def __init__(self, model):
