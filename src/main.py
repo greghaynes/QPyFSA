@@ -13,7 +13,7 @@ class StateView(QtGui.QGraphicsEllipseItem):
 		self.setBrush(QtGui.QBrush(QtGui.QColor(0xAA, 0xff, 0xff)))
 		
 		label = QtGui.QGraphicsTextItem(name, self)
-		print self.pos().x()
+		# ow
 		label.setPos(self.boundingRect().x()+((self.boundingRect().width() - label.boundingRect().width())/2), self.boundingRect().y()+((self.boundingRect().height() - label.boundingRect().height()) / 2))
 
 class FSAView(QtGui.QMainWindow):
@@ -53,7 +53,7 @@ class FSAView(QtGui.QMainWindow):
 		view = model.createView()
 		view.show()
 	def addState(self):
-		name, ok = QtGui.QInputDialog.getText(self, 'Add State', 'State name:')
+		name, ok = QtGui.QInputDialog.getText(self, _('Add State'), _('State name:'))
 		if ok:
 			view = StateView(name)
 			self.stateviews.append(view)
