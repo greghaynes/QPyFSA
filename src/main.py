@@ -9,6 +9,7 @@ _ = gettext.gettext
 class StateView(QtGui.QGraphicsEllipseItem):
 	def __init__(self, name):
 		QtGui.QGraphicsEllipseItem.__init__(self, 20, 20, 50, 50)
+		self.setFlags(QtGui.QGraphicsItem.ItemIsMovable)
 		self.setBrush(QtGui.QBrush(QtGui.QColor(0x00, 0xff, 0xff)))
 
 class FSAView(QtGui.QMainWindow):
@@ -16,6 +17,8 @@ class FSAView(QtGui.QMainWindow):
 		QtGui.QMainWindow.__init__(self)
 		self.model = model
 		self.scene = QtGui.QGraphicsScene(self)
+		self.sceneView = QtGui.QGraphicsView(self.scene)
+		self.sceneView.setInteractive(True)
 		self.setWindowTitle(model.name)
 		
 		# static actions
@@ -40,7 +43,7 @@ class FSAView(QtGui.QMainWindow):
 		except AttributeError:
 			self.stateviews = []
 		
-		self.setCentralWidget(QtGui.QGraphicsView(self.scene))
+		self.setCentralWidget(self.sceneView)
 	def newModel(self):
 		model = self.model.editor.createFSA()
 		view = model.createView()
